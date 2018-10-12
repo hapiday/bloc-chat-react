@@ -15,20 +15,15 @@ import RoomList from './components/RoomList';
  firebase.initializeApp(config);
 
  class App extends Component {
-   constructor(props){
-     super(props);
-     this.state = {
-       rooms: []
-     };
 
-   }
   render() {
     return (
       <div>
-        <RoomList firebase={firebase}/>
+        <RoomList firebase={firebase} />
       </div>
     );
   }
+
 }
 
 export default App;
