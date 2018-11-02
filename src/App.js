@@ -4,6 +4,7 @@ import './App.css';
 import * as firebase from 'firebase';
 import { RoomList } from './components/RoomList.js';
 import { MessageList } from './components/MessageList.js';
+import User from './components/User';
 
 var config = {
     apiKey: "AIzaSyAkUx01__RRp0RZW-Ml5AkYILsXnTdmgdY",
@@ -21,16 +22,22 @@ var config = {
       this.state = {activeRoom: ""};
       this.activeRoom = this.activeRoom.bind(this);
     }
-   activeRoom(room) {
-    this.setState({ activeRoom: room })
-  }
+    activeRoom(room) {
+      this.setState({ activeRoom: room })
+    }
+    setUser(user) {
+      this.setState({ currentUser: user})
+      console.log(user)
+    }
+
      render() {
       const showMessages = this.state.activeRoom;
       return (
         <div>
           <h1>{this.state.activeRoom.title || "ROOMS"}</h1>
           <RoomList firebase={firebase} activeRoom={this.activeRoom} />
-          <MessageList firebase={firebase} activeRoom={this.state.activeRoom.key} />
+          <MessageList firebase={firebase} activeRoom={this.state.activeRoom.key} user={this.state.currentUser} />
+          <User firebase={firebase} user={this.state.currentUser} setUser={this.setUser.bind(this)} />
         </div>
       );
     }

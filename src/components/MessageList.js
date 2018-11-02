@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import * as firebase from "firebase";
 
+
 export class MessageList extends Component {
   constructor(props) {
     super(props);
@@ -21,14 +22,16 @@ export class MessageList extends Component {
   createMessage(e) {
     e.preventDefault();
     this.messagesRef.push({
-      username: this.state.username,
-      content: this.state.content,
-      sentAt: this.state.sentAt,
-      roomId: this.props.activeRoom
+      username: this.props.user.displayName,
+      content: this.state.newMessage,
+      sentAt: this.props.firebase.database.ServerValue.TIMESTAMP,
+      roomId: this.props.activeRoom.key
     });
     this.setState({ username: "", content: "", sentAt: "", roomId: "" });
   }
-
+formatTime(time) {
+  return new Date(time);
+}
   componentDidMount() {
     this.messagesRef.on('child_added', snapshot => {
       const message = snapshot.val();
@@ -36,29 +39,24 @@ export class MessageList extends Component {
       this.setState({ messages: this.state.messages.concat(message) })
     });}
   render() {
-    const activeRoom = this.props.activeRoom;
+      const activeRoom = this.props.activeRoom;
 
-    const messageBar = (
+      const messageBar = (
       <form onSubmit={this.createMessage}>
         <input type="text" value={this.state.content} placeholder="Enter Message" onChange={this.handleChange}/>
         <input type="submit" value="Send" />
       </form>
     );
 
-    const messageLine =
-      this.state.messages.map((message, index) => {
+    const messageLine = (
+      this.state.messages.map((message) => {
         if (message.roomId === activeRoom) {
-          return(
-            <table key={index}>
-         <tr>
-           <td className="message-username">{message.user}</td>
-           <td className="message-content">{message.content}</td>
-           <td className="message-sentAt">{message.sentAt}</td>
-         </tr>
-       </table>
-     );
-  }
-});
+          return <li key={message.key}>{message.content}</li>
+        }
+        return null;
+      })
+    );
+
 
     return(
       <div>
@@ -68,3 +66,4 @@ export class MessageList extends Component {
     );
   }
 }
+export default MessageList;
